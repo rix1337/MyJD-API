@@ -18,3 +18,7 @@ venv
 
 # PyCharm
 .idea
+
+# MyJD API files
+*.conf
+*.ini

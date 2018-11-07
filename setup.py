@@ -16,14 +16,14 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setuptools.setup(
-    name="myjd-api",
+    name="myjd_api",
     version="0.0.1",
     author="rix1337",
     author_email="",
     description="A simple json interface for the MyJDownloader API",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/rix1337/myjd-api",
+    url="https://github.com/rix1337/myjd_api",
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=required,
@@ -36,7 +36,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'myjd-api = myjd-api.web:main',
+            'myjd_api = myjd_api.web:main',
         ],
     },
 )
