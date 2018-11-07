@@ -8,6 +8,10 @@ This is a standalone version of [RSScrawler](https://github.com/rix1337/RSScrawl
 
 `pip install myjd-api`
 
+# Run
+
+`myjd_api`
+
 ## Credits
 
 * [mmarquezs](https://github.com/mmarquezs/)
