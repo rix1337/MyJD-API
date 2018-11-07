@@ -7,8 +7,7 @@ import base64
 import socket
 
 import six
-
-from myjd import myjdapi
+from api import myjdapi
 
 
 def check_ip():

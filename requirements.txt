@@ -5,4 +5,5 @@
 flask
 gevent
 pycryptodome
+requests
 six

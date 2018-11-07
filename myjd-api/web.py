@@ -7,24 +7,24 @@ import json
 import os
 import sys
 
+from api.common import check_ip
+from api.common import decode_base64
+from api.config import Config
+from api.files import config
+from api.files import myjd_input
+from api.myjd import get_device
+from api.myjd import get_if_one_device
+from api.myjd import get_info
+from api.myjd import get_state
+from api.myjd import jdownloader_pause
+from api.myjd import jdownloader_start
+from api.myjd import jdownloader_stop
+from api.myjd import move_to_downloads
+from api.myjd import remove_from_linkgrabber
+from api.myjd import retry_decrypt
+from api.myjd import update_jdownloader
 from flask import Flask, request, jsonify
 from gevent.pywsgi import WSGIServer
-
-from myjd.common import decode_base64
-from myjd.config import Config
-from myjd.files import config
-from myjd.files import myjd_input
-from myjd.myjd import get_device
-from myjd.myjd import get_if_one_device
-from myjd.myjd import get_info
-from myjd.myjd import get_state
-from myjd.myjd import jdownloader_pause
-from myjd.myjd import jdownloader_start
-from myjd.myjd import jdownloader_stop
-from myjd.myjd import move_to_downloads
-from myjd.myjd import remove_from_linkgrabber
-from myjd.myjd import retry_decrypt
-from myjd.myjd import update_jdownloader
 
 
 def app_container(port, configfile, _device):
@@ -33,7 +33,7 @@ def app_container(port, configfile, _device):
 
     app = Flask(__name__, template_folder='web')
 
-    @app.route("/myjd/", methods=['GET'])
+    @app.route("/", methods=['GET'])
     def myjd_info():
         global device
         if request.method == 'GET':
@@ -209,15 +209,25 @@ def app_container(port, configfile, _device):
     http_server.serve_forever()
 
 
-if __name__ == '__main__':
-    configfile = config()
+def main():
+    configfile = config() + "/MyJD.ini"
     if not os.path.exists(configfile):
         _device = myjd_input(configfile)
+        settings = Config('MyJD', configfile)
+        port = int(settings.get('port'))
     else:
         settings = Config('MyJD', configfile)
         user = settings.get('myjd_user')
         password = settings.get('myjd_pass')
-        port = settings.get('port')
+        port = int(settings.get('port'))
+        if not port:
+            port = 8080
+        if not user and not password:
+            _device = myjd_input(configfile)
+            settings = Config('MyJD', configfile)
+            user = settings.get('myjd_user')
+            password = settings.get('myjd_pass')
+            port = int(settings.get('port'))
         if user and password:
             _device = get_device(configfile)
             if not _device:
@@ -230,6 +240,8 @@ if __name__ == '__main__':
                     print(u'Could not connect to My JDownloader! Exiting...')
                     sys.exit(0)
         else:
-            _device = False
-
-    app_container(port, configfile, _device)
+            print(u'Could not connect to My JDownloader! Exiting...')
+            sys.exit(0)
+    if _device:
+        print(u'MyJD is available at http://' + check_ip() + ':' + str(port) + u'/ connected with: ' + _device.name)
+        app_container(port, configfile, _device)

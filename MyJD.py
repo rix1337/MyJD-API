@@ -1,4 +1,4 @@
-from myjd import web
+from api import web
 
 if __name__ == '__main__':
     web.main()

@@ -729,7 +729,7 @@ class Jddevice:
         action_url = self.__action_url()
         if not self.__direct_connection_enabled or self.__direct_connection_info is None \
                 or time.time() < self.__direct_connection_cooldown:
-            # No direct connection available, we use My.JDownloader api.
+            # No direct connection available, we use My.JDownloader myjd-api.
             response = self.myjd.request_api(path, http_action, params,
                                              action_url)
             if response is None:
@@ -750,7 +750,7 @@ class Jddevice:
                     connection = conn['conn']
                     api = "http://" + connection["ip"] + ":" + str(
                         connection["port"])
-                    # if self.myjd.request_api("/device/ping", "POST", None, self.__action_url(), api):
+                    # if self.myjd-api.request_api("/device/ping", "POST", None, self.__action_url(), myjd-api):
                     response = self.myjd.request_api(path, http_action, params,
                                                      action_url, api)
                     if response is not None:
@@ -766,7 +766,7 @@ class Jddevice:
             self.__direct_connection_consecutive_failures += 1
             self.__direct_connection_cooldown = time.time() + \
                                                 (60 * self.__direct_connection_consecutive_failures)
-            # None of the direct connections worked, we use the My.JDownloader api
+            # None of the direct connections worked, we use the My.JDownloader myjd-api
             response = self.myjd.request_api(path, http_action, params,
                                              action_url)
             if response is None:
@@ -789,11 +789,11 @@ class Myjdapi:
 
     def __init__(self):
         """
-        This functions initializates the myjd object.
+        This functions initializates the myjd-api object.
 
         """
         self.__request_id = int(time.time() * 1000)
-        self.__api_url = "https://api.jdownloader.org"
+        self.__api_url = "https://myjd-api.jdownloader.org"
         self.__app_key = "http://git.io/vmcsk"
         self.__api_version = 1
         self.__devices = None
@@ -897,7 +897,7 @@ class Myjdapi:
         self.__request_id = int(time.time())
 
     def connect(self, email, password):
-        """Establish connection to api
+        """Establish connection to myjd-api
 
         :param email: My.Jdownloader User email
         :param password: My.Jdownloader User password
@@ -1020,7 +1020,7 @@ class Myjdapi:
         params={"test":"test"}
         post_params={"test2":"test2"}
         action=True
-        This would make a request to "https://api.jdownloader.org"
+        This would make a request to "https://myjd-api.jdownloader.org"
         """
         if not api:
             api = self.__api_url
