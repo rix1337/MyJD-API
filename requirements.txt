@@ -1,0 +1,8 @@
+# -*- coding: utf-8 -*-
+# MyJD
+# Project by https://github.com/rix1337
+
+flask
+gevent
+pycryptodome
+six
