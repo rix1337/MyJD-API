@@ -17,7 +17,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="myjd_api",
-    version="0.0.1",
+    version="0.0.2",
     author="rix1337",
     author_email="",
     description="A simple json interface for the MyJDownloader API",

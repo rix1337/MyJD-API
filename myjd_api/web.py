@@ -7,22 +7,22 @@ import json
 import os
 import sys
 
-from api.common import check_ip
-from api.common import decode_base64
-from api.config import Config
-from api.files import config
-from api.files import myjd_input
-from api.myjd import get_device
-from api.myjd import get_if_one_device
-from api.myjd import get_info
-from api.myjd import get_state
-from api.myjd import jdownloader_pause
-from api.myjd import jdownloader_start
-from api.myjd import jdownloader_stop
-from api.myjd import move_to_downloads
-from api.myjd import remove_from_linkgrabber
-from api.myjd import retry_decrypt
-from api.myjd import update_jdownloader
+from myjd_api.common import check_ip
+from myjd_api.common import decode_base64
+from myjd_api.config import Config
+from myjd_api.files import config
+from myjd_api.files import myjd_input
+from myjd_api.myjd import get_device
+from myjd_api.myjd import get_if_one_device
+from myjd_api.myjd import get_info
+from myjd_api.myjd import get_state
+from myjd_api.myjd import jdownloader_pause
+from myjd_api.myjd import jdownloader_start
+from myjd_api.myjd import jdownloader_stop
+from myjd_api.myjd import move_to_downloads
+from myjd_api.myjd import remove_from_linkgrabber
+from myjd_api.myjd import retry_decrypt
+from myjd_api.myjd import update_jdownloader
 from flask import Flask, request, jsonify
 from gevent.pywsgi import WSGIServer
 

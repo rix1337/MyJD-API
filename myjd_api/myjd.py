@@ -2,11 +2,11 @@
 # MyJD
 # Project by https://github.com/rix1337
 
-import api.myjdapi
-from api.common import is_device
-from api.common import readable_size
-from api.common import readable_time
-from api.config import Config
+import myjd_api.myjdapi
+from myjd_api.common import is_device
+from myjd_api.common import readable_size
+from myjd_api.common import readable_time
+from myjd_api.config import Config
 
 
 def get_device(configfile):
@@ -15,7 +15,7 @@ def get_device(configfile):
     myjd_pass = str(conf.get('myjd_pass'))
     myjd_device = str(conf.get('myjd_device'))
 
-    jd = api.myjdapi.Myjdapi()
+    jd = myjd_api.myjdapi.Myjdapi()
     jd.set_app_key('MyJD')
 
     if myjd_user and myjd_pass and myjd_device:
@@ -23,7 +23,7 @@ def get_device(configfile):
             jd.connect(myjd_user, myjd_pass)
             jd.update_devices()
             device = jd.get_device(myjd_device)
-        except api.myjdapi.MYJDException as e:
+        except myjd_api.myjdapi.MYJDException as e:
             print(u"Error connection to MyJDownloader: " + str(e))
             return False
         if not device or not is_device(device):
@@ -35,7 +35,7 @@ def get_device(configfile):
             jd.connect(myjd_user, myjd_pass)
             jd.update_devices()
             device = jd.get_device(myjd_device)
-        except api.myjdapi.MYJDException as e:
+        except myjd_api.myjdapi.MYJDException as e:
             print(u"Error connection to MyJDownloader: " + str(e))
             return False
         if not device or not is_device(device):
@@ -46,20 +46,20 @@ def get_device(configfile):
 
 
 def check_device(myjd_user, myjd_pass, myjd_device):
-    jd = api.myjdapi.Myjdapi()
+    jd = myjd_api.myjdapi.Myjdapi()
     jd.set_app_key('MyJD')
     try:
         jd.connect(myjd_user, myjd_pass)
         jd.update_devices()
         device = jd.get_device(myjd_device)
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
     return device
 
 
 def get_if_one_device(myjd_user, myjd_pass):
-    jd = api.myjdapi.Myjdapi()
+    jd = myjd_api.myjdapi.Myjdapi()
     jd.set_app_key('MyJD')
     try:
         jd.connect(myjd_user, myjd_pass)
@@ -69,7 +69,7 @@ def get_if_one_device(myjd_user, myjd_pass):
             return devices[0].get('name')
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -251,7 +251,7 @@ def check_failed_packages(configfile, device):
                 grabber_collecting = device.linkgrabber.is_collecting()
                 packages_in_linkgrabber = get_packages_in_linkgrabber(device)
                 packages_in_linkgrabber_failed = packages_in_linkgrabber[0]
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -262,7 +262,7 @@ def check_failed_packages(configfile, device):
             return [device, grabber_collecting, packages_in_linkgrabber_failed]
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -275,7 +275,7 @@ def get_state(configfile, device):
             try:
                 downloader_state = device.downloadcontroller.get_current_state()
                 grabber_collecting = device.linkgrabber.is_collecting()
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -284,7 +284,7 @@ def get_state(configfile, device):
             return [device, downloader_state, grabber_collecting]
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -304,7 +304,7 @@ def get_info(configfile, device):
                 packages_in_linkgrabber_failed = packages_in_linkgrabber[0]
                 packages_in_offline = packages_in_linkgrabber[1]
                 packages_in_linkgrabber_decrypted = packages_in_linkgrabber[2]
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -323,7 +323,7 @@ def get_info(configfile, device):
                      packages_in_linkgrabber_failed]]
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -335,7 +335,7 @@ def move_to_downloads(configfile, device, linkids, uuid):
         if device:
             try:
                 device.linkgrabber.move_to_downloadlist(linkids, uuid)
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -343,7 +343,7 @@ def move_to_downloads(configfile, device, linkids, uuid):
             return device
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -355,7 +355,7 @@ def remove_from_linkgrabber(configfile, device, linkids, uuid):
         if device:
             try:
                 device.linkgrabber.remove_links(linkids, uuid)
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -363,7 +363,7 @@ def remove_from_linkgrabber(configfile, device, linkids, uuid):
             return device
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -401,7 +401,7 @@ def download(configfile, device, title, subdir, links, password, full_path=None)
                     "destinationFolder": path,
                     "overwritePackagizerRules": False
                 }])
-        except api.myjdapi.TokenExpiredException:
+        except myjd_api.myjdapi.TokenExpiredException:
             device = get_device(configfile)
             if not device or not is_device(device):
                 return False
@@ -417,7 +417,7 @@ def download(configfile, device, title, subdir, links, password, full_path=None)
                     "overwritePackagizerRules": False
                 }])
         return device
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -446,7 +446,7 @@ def retry_decrypt(configfile, device, linkids, uuid, links):
                         "startAt": 0,
                         "status": True
                     }])
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -478,7 +478,7 @@ def retry_decrypt(configfile, device, linkids, uuid, links):
                 return False
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -490,7 +490,7 @@ def update_jdownloader(configfile, device):
         if device:
             try:
                 device.update.restart_and_update()
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -498,7 +498,7 @@ def update_jdownloader(configfile, device):
             return device
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -510,7 +510,7 @@ def jdownloader_start(configfile, device):
         if device:
             try:
                 device.downloadcontroller.start_downloads()
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -518,7 +518,7 @@ def jdownloader_start(configfile, device):
             return device
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -530,7 +530,7 @@ def jdownloader_pause(configfile, device, bl):
         if device:
             try:
                 device.downloadcontroller.pause_downloads(bl)
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -538,7 +538,7 @@ def jdownloader_pause(configfile, device, bl):
             return device
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 
@@ -550,7 +550,7 @@ def jdownloader_stop(configfile, device):
         if device:
             try:
                 device.downloadcontroller.stop_downloads()
-            except api.myjdapi.TokenExpiredException:
+            except myjd_api.myjdapi.TokenExpiredException:
                 device = get_device(configfile)
                 if not device or not is_device(device):
                     return False
@@ -558,7 +558,7 @@ def jdownloader_stop(configfile, device):
             return device
         else:
             return False
-    except api.myjdapi.MYJDException as e:
+    except myjd_api.myjdapi.MYJDException as e:
         print(u"Error connection to MyJDownloader: " + str(e))
         return False
 

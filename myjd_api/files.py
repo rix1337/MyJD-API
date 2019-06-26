@@ -6,9 +6,9 @@ import os
 import sys
 
 import six
-from api.config import Config
-from api.myjd import get_device
-from api.myjd import get_if_one_device
+from myjd_api.config import Config
+from myjd_api.myjd import get_device
+from myjd_api.myjd import get_if_one_device
 
 
 def config():
