@@ -231,7 +231,7 @@ def app_container(port, configfile, _device):
 def main():
     arguments = docopt(__doc__, version='MyJD-API')
 
-    if arguments['docker']:
+    if arguments['--docker']:
         configfile = '/config/MyJD.ini'
     else:
         configfile = config() + "/MyJD.ini"
@@ -256,7 +256,7 @@ def main():
                 _device = get_device(configfile)
             else:
                 print(
-                    'Please provide "-e PARAMETER=[--jd-user=<USERNAME> --jd-pass=<PASSWORD>" for the first run of this docker image!')
+                    u'Please provide "-e PARAMETER=[--jd-user=<USERNAME> --jd-pass=<PASSWORD>" for the first run of this docker image!')
                 print(u'Could not connect to My JDownloader! Exiting...')
                 sys.exit(0)
         else:
@@ -305,4 +305,6 @@ def main():
         if not arguments['--docker']:
             print(u'MyJD-API is available at http://' + check_ip() + ':' + str(
                 port) + u'/ connected with: ' + _device.name)
+        else:
+            print(u'MyJD-API is available and connected with: ' + _device.name)
         app_container(port, configfile, _device)
