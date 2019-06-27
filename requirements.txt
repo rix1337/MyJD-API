@@ -2,6 +2,7 @@
 # MyJD
 # Project by https://github.com/rix1337
 
+docopt
 flask
 gevent
 pycryptodome

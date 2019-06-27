@@ -2,10 +2,29 @@
 # MyJD
 # Project by https://github.com/rix1337
 
+"""MyJD-API.
+
+Usage:
+  web.py        [--jd-user=<USERNAME>]
+                [--jd-pass=<PASSWORD>]
+                [--jd-device=<DEVICENAME>]
+                [--port=<PORT>]
+                [--docker]
+
+Options:
+  --jd-user=USERNAME        Stores the username for My JDownloader
+  --jd-pass=PASSWORD        Stores the password for My JDownloader
+  --jd-device=DEVICENAME    Stores the device name for My JDownloader
+  --port=<PORT>             Legt den Port des Webservers fest
+  --docker                  Internal: Locks path and port to Docker default values (preventing wrong settings)
+"""
+
 import ast
 import json
 import os
 import sys
+
+from docopt import docopt
 
 from myjd_api.common import check_ip
 from myjd_api.common import decode_base64
@@ -210,19 +229,59 @@ def app_container(port, configfile, _device):
 
 
 def main():
-    configfile = config() + "/MyJD.ini"
-    if not os.path.exists(configfile):
-        _device = myjd_input(configfile)
-        settings = Config('MyJD', configfile)
-        port = int(settings.get('port'))
+    arguments = docopt(__doc__, version='MyJD-API')
+
+    if arguments['docker']:
+        configfile = '/config/MyJD.ini'
     else:
+        configfile = config() + "/MyJD.ini"
+    if not os.path.exists(configfile):
+        if arguments['--docker']:
+            if arguments['--jd-user'] and arguments['--jd-pass']:
+                Config('MyJD', configfile).save("myjd_user", arguments['--jd-user'])
+                Config('MyJD', configfile).save("myjd_pass", arguments['--jd-pass'])
+                if arguments['--jd-device']:
+                    Config('MyJD', configfile).save("myjd_device", arguments['--jd-device'])
+                else:
+                    device_name = get_if_one_device(arguments['--jd-user'], arguments['--jd-pass'])
+                    if device_name:
+                        print(u"Device name " + device_name + " found automatically.")
+                        Config('MyJD', configfile).save("myjd_device", device_name)
+                    else:
+                        print(
+                            'Please provide "-e PARAMETER=[--jd-device=<DEVICENAME>]" for the first run of this docker image!')
+                        print(u'Could not connect to My JDownloader! Exiting...')
+                        sys.exit(0)
+                Config('MyJD', configfile).save("port", "8080")
+                _device = get_device(configfile)
+            else:
+                print(
+                    'Please provide "-e PARAMETER=[--jd-user=<USERNAME> --jd-pass=<PASSWORD>" for the first run of this docker image!')
+                print(u'Could not connect to My JDownloader! Exiting...')
+                sys.exit(0)
+        else:
+            _device = myjd_input(configfile)
+            settings = Config('MyJD', configfile)
+            port = int(settings.get('port'))
+    else:
+        if arguments['--jd-user']:
+            Config('MyJD', configfile).save("myjd_user", arguments['--jd-user'])
+        if arguments['--jd-pass']:
+            Config('MyJD', configfile).save("myjd_pass", arguments['--jd-pass'])
+        if arguments['--jd-device']:
+            Config('MyJD', configfile).save("myjd_device", arguments['--jd-device'])
+        if arguments['--port'] and not arguments['--docker']:
+            Config('MyJD', configfile).save("port", arguments['--port'])
         settings = Config('MyJD', configfile)
         user = settings.get('myjd_user')
         password = settings.get('myjd_pass')
-        port = int(settings.get('port'))
-        if not port:
+        if not arguments['--docker']:
+            port = int(settings.get('port'))
+            if not port:
+                port = 8080
+        else:
             port = 8080
-        if not user and not password:
+        if not user and not password and not arguments['--docker']:
             _device = myjd_input(configfile)
             settings = Config('MyJD', configfile)
             user = settings.get('myjd_user')
@@ -243,5 +302,7 @@ def main():
             print(u'Could not connect to My JDownloader! Exiting...')
             sys.exit(0)
     if _device:
-        print(u'MyJD is available at http://' + check_ip() + ':' + str(port) + u'/ connected with: ' + _device.name)
+        if not arguments['--docker']:
+            print(u'MyJD-API is available at http://' + check_ip() + ':' + str(
+                port) + u'/ connected with: ' + _device.name)
         app_container(port, configfile, _device)
