@@ -233,8 +233,8 @@ def main():
             if not _device:
                 _device = get_if_one_device(user, password)
                 if _device:
-                    print(u"Device name " + device + " found automatically.")
-                    settings.save('myjd_device', device)
+                    print(u"Device name " + _device + " found automatically.")
+                    settings.save('myjd_device', _device)
                     _device = get_device(configfile)
                 else:
                     print(u'Could not connect to My JDownloader! Exiting...')
