@@ -4,6 +4,8 @@
 
 This is a standalone version of [RSScrawler](https://github.com/rix1337/RSScrawler)'s MyJDownloader API for use with projects like [Organizr](https://github.com/causefx/Organizr).
 
+The official docker image is available at [Docker Hub](https://hub.docker.com/r/rix1337/docker-myjd-api).
+
 # Setup
 
 `pip install myjd-api`
