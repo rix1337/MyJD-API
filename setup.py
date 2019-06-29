@@ -4,6 +4,8 @@
 
 import setuptools
 
+from myjd_api.version import get_version
+
 try:
     with open('README.md', encoding='utf-8') as f:
         long_description = f.read()
@@ -17,10 +19,10 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="myjd_api",
-    version="0.1.1",
+    version=get_version().replace("v.", ""),
     author="rix1337",
     author_email="",
-    description="A simple json interface for the MyJDownloader API",
+    description="A simple json interface for the MyJDownloader API to be used with Organizr",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/rix1337/MyJD-API",
