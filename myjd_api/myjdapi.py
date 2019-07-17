@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # MyJD
 # Project by https://github.com/rix1337
+# Contains Code from
+# https://github.com/mmarquezs/My.Jdownloader-API-Python-Library/
 #
 # The MIT License (MIT)
 #
@@ -37,7 +39,7 @@ except:  # For Python 2
     # from urllib import urlopen
 import base64
 import requests
-from Crypto.Cipher import AES
+from Cryptodome.Cipher import AES
 
 BS = 16
 
@@ -474,6 +476,11 @@ class Linkgrabber:
         """
         pass
 
+    def move_to_new_package(self, links_ids, packages_ids, new_pkg_name, download_path):
+        params = links_ids, packages_ids, new_pkg_name, download_path
+        resp = self.device.action(self.url + "/movetoNewPackage", params)
+        return resp
+
     def set_variant(self):
         """
         No idea what parameters i have to pass and/or i don't know what it does.
@@ -617,6 +624,7 @@ class Downloads:
                            "hosts": True,
                            "saveTo": True,
                            "maxResults": -1,
+                           "packageUUIDs": [],
                            "startAt": 0,
                        }]):
         """
@@ -649,6 +657,11 @@ class Downloads:
         params = [links_ids, packages_ids]
         params += [action, mode, selection_type]
         resp = self.device.action(self.url + "/cleanup", params)
+        return resp
+
+    def remove_links(self, links_ids, packages_ids):
+        params = [links_ids, packages_ids]
+        resp = self.device.action(self.url + "/removeLinks", params)
         return resp
 
 
@@ -729,7 +742,7 @@ class Jddevice:
         action_url = self.__action_url()
         if not self.__direct_connection_enabled or self.__direct_connection_info is None \
                 or time.time() < self.__direct_connection_cooldown:
-            # No direct connection available, we use My.JDownloader myjd_api.
+            # No direct connection available, we use My.JDownloader api.
             response = self.myjd.request_api(path, http_action, params,
                                              action_url)
             if response is None:
@@ -750,7 +763,7 @@ class Jddevice:
                     connection = conn['conn']
                     api = "http://" + connection["ip"] + ":" + str(
                         connection["port"])
-                    # if self.myjd_api.request_api("/device/ping", "POST", None, self.__action_url(), myjd_api):
+                    # if self.myjd.request_api("/device/ping", "POST", None, self.__action_url(), api):
                     response = self.myjd.request_api(path, http_action, params,
                                                      action_url, api)
                     if response is not None:
@@ -766,7 +779,7 @@ class Jddevice:
             self.__direct_connection_consecutive_failures += 1
             self.__direct_connection_cooldown = time.time() + \
                                                 (60 * self.__direct_connection_consecutive_failures)
-            # None of the direct connections worked, we use the My.JDownloader myjd_api
+            # None of the direct connections worked, we use the My.JDownloader api
             response = self.myjd.request_api(path, http_action, params,
                                              action_url)
             if response is None:
@@ -789,7 +802,7 @@ class Myjdapi:
 
     def __init__(self):
         """
-        This functions initializates the myjd_api object.
+        This functions initializates the myjdapi object.
 
         """
         self.__request_id = int(time.time() * 1000)
@@ -897,7 +910,7 @@ class Myjdapi:
         self.__request_id = int(time.time())
 
     def connect(self, email, password):
-        """Establish connection to myjd_api
+        """Establish connection to api
 
         :param email: My.Jdownloader User email
         :param password: My.Jdownloader User password
@@ -1020,7 +1033,7 @@ class Myjdapi:
         params={"test":"test"}
         post_params={"test2":"test2"}
         action=True
-        This would make a request to "https://myjd_api.jdownloader.org"
+        This would make a request to "https://api.jdownloader.org"
         """
         if not api:
             api = self.__api_url
