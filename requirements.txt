@@ -5,6 +5,6 @@
 docopt
 flask
 gevent
-pycryptodome
+pycryptodomex
 requests
 six
