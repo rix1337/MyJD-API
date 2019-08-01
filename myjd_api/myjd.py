@@ -176,7 +176,7 @@ def check_packages_types(links, packages):
                 if uuid == link.get('packageUUID'):
                     if link.get('availability') == 'OFFLINE' or link.get('status') == 'Datei nicht gefunden':
                         package_offline = True
-                    if 'Falscher Captcha Code!' in link.get('name') or (
+                    if 'Falscher Captcha Code!' in link.get('name') or 'Wrong Captcha!' in link.get('name') or (
                             link.get('comment') and 'BLOCK_HOSTER' in link.get('comment')):
                         package_failed = True
                     url = link.get('url')
@@ -191,7 +191,8 @@ def check_packages_types(links, packages):
         for h in hosts:
             if h == 'linkcrawlerretry':
                 package_failed = True
-        if package.get('status') and 'Ein Fehler ist aufgetreten!' in package.get('status'):
+        if package.get('status') and 'Ein Fehler ist aufgetreten!' in package.get(
+                'status') or 'An error occurred!' in package.get('status'):
             package_failed = True
         if package_failed:
             package_offline = False
