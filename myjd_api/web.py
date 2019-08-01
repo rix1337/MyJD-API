@@ -23,6 +23,7 @@ import ast
 import json
 import os
 import sys
+import time
 
 from docopt import docopt
 from flask import Flask, request, jsonify
@@ -253,6 +254,7 @@ def main():
                         print(
                             'Please provide "-e PARAMETER=[--jd-device=<DEVICENAME>]" for the first run of this docker image!')
                         print(u'Could not connect to My JDownloader! Exiting...')
+                        time.sleep(10)
                         sys.exit(1)
                 Config('MyJD', configfile).save("port", "8080")
                 _device = get_device(configfile)
@@ -260,6 +262,7 @@ def main():
                 print(
                     u'Please provide "-e PARAMETER=[--jd-user=<USERNAME> --jd-pass=<PASSWORD>" for the first run of this docker image!')
                 print(u'Could not connect to My JDownloader! Exiting...')
+                time.sleep(10)
                 sys.exit(1)
         else:
             _device = myjd_input(configfile)
@@ -297,9 +300,11 @@ def main():
                     _device = get_device(configfile)
                 else:
                     print(u'Could not connect to My JDownloader! Exiting...')
+                    time.sleep(10)
                     sys.exit(1)
         else:
             print(u'Could not connect to My JDownloader! Exiting...')
+            time.sleep(10)
             sys.exit(1)
     if _device:
         if not arguments['--docker']:
@@ -310,4 +315,5 @@ def main():
         app_container(port, configfile, _device)
     else:
         print(u'Could not connect to My JDownloader! Exiting...')
+        time.sleep(10)
         sys.exit(1)
