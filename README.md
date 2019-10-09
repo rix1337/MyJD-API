@@ -1,7 +1,7 @@
 #  MyJD-API
 
 [![PyPI version](https://badge.fury.io/py/myjd-api.svg)](https://badge.fury.io/py/myjd-api)
-[![ko-fi](https://img.shields.io/badge/support-me-red.svg)](https://ko-fi.com/J3J4Y2R6)
+[![Github Sponsorship](https://img.shields.io/badge/support-me-red.svg)](https://github.com/users/rix1337/sponsorship)
 
 This is a standalone version of [RSScrawler](https://github.com/rix1337/RSScrawler)'s MyJDownloader API for use with projects like [Organizr](https://github.com/causefx/Organizr).
 
