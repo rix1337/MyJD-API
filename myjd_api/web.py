@@ -308,10 +308,10 @@ def main():
             sys.exit(1)
     if _device:
         if not arguments['--docker']:
-            print(u'MyJD-API (' + get_version() + ') is available at http://' + check_ip() + ':' + str(
+            print(u'MyJD-API (v.' + get_version() + ') is available at http://' + check_ip() + ':' + str(
                 port) + u'/ connected with: ' + _device.name)
         else:
-            print(u'MyJD-API (' + get_version() + ') is available and connected with: ' + _device.name)
+            print(u'MyJD-API (v.' + get_version() + ') is available and connected with: ' + _device.name)
         app_container(port, configfile, _device)
     else:
         print(u'Could not connect to My JDownloader! Exiting...')
