@@ -27,9 +27,8 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
       - name: Get Version
-        run: |
-          version=$(grep -Po 'version="(.+?)"' setup.py) && version="${version:9}" && version="${version::-1}"        
-          echo "::set-output name=version::$version"
+      - name: Get Version
+        run: echo "::set-output name=version::$(python myjd_api/version.py)"
         id: version
       - name: Create Release
         uses: actions/create-release@v1
