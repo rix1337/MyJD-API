@@ -27,7 +27,6 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
       - name: Get Version
-      - name: Get Version
         run: echo "::set-output name=version::$(python myjd_api/version.py)"
         id: version
       - name: Create Release
