@@ -19,7 +19,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="myjd_api",
-    version=get_version().replace("v.", ""),
+    version=get_version(),
     author="rix1337",
     author_email="",
     description="A simple json interface for the MyJDownloader API to be used with Organizr",
