@@ -4,4 +4,7 @@
 
 
 def get_version():
-    return "v.0.3.2"
+    return "v.0.3.3"
+
+if __name__ == '__main__':
+    print(get_version())
