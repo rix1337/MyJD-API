@@ -2,7 +2,7 @@
 # MyJD
 # Project by https://github.com/rix1337
 
-from six.moves import configparser
+import configparser
 
 
 class Config(object):
@@ -11,8 +11,12 @@ class Config(object):
             ("myjd_user", "str", ""),
             ("myjd_pass", "str", ""),
             ("myjd_device", "str", ""),
-            ("port", "int", "8080")
-        ]
+            ("port", "int", "8080"),
+        ],
+        'Auth': [
+            ("auth_user", "str", ""),
+            ("auth_hash", "str", ""),
+        ],
     }
     __config__ = []
 

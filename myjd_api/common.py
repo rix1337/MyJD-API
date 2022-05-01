@@ -6,7 +6,6 @@
 import base64
 import socket
 
-import six
 from myjd_api import myjdapi
 
 
@@ -23,10 +22,7 @@ def check_ip():
 
 
 def decode_base64(value):
-    if six.PY2:
-        return value.decode("base64")
-    else:
-        return base64.b64decode(value).decode()
+    return base64.b64decode(value).decode()
 
 
 def readable_size(size):

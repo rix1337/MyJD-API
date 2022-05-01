@@ -2,6 +2,7 @@
 # MyJD
 # Project by https://github.com/rix1337
 # Contains Code from
+#
 # https://github.com/mmarquezs/My.Jdownloader-API-Python-Library/
 #
 # The MIT License (MIT)
@@ -26,20 +27,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import base64
 import hashlib
 import hmac
 import json
 import time
+from urllib.error import URLError
+from urllib.parse import quote
 
-try:
-    # from urllib.request import urlopen
-    from urllib.parse import quote
-except:  # For Python 2
-    from urllib import quote
-    # from urllib import urlopen
-import base64
-import requests
 from Cryptodome.Cipher import AES
+
+import requests
 
 BS = 16
 
@@ -52,18 +50,12 @@ class TokenExpiredException(BaseException):
     pass
 
 
-def PAD(s):
-    try:
-        return s + ((BS - len(s) % BS) * chr(BS - len(s) % BS)).encode()
-    except:  # For python 2
-        return s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
+def pad(s):
+    return s + ((BS - len(s) % BS) * chr(BS - len(s) % BS)).encode()
 
 
-def UNPAD(s):
-    try:
-        return s[0:-s[-1]]
-    except:  # For python 2
-        return s[0:-ord(s[-1])]
+def unpad(s):
+    return s[0:-s[-1]]
 
 
 class System:
@@ -239,9 +231,9 @@ class Linkgrabber:
         """
         Moves packages and/or links to download list.
 
-        :param packages: Packages UUIDs.
+        :param links_ids:
+        :param packages_ids:
         :type: list of strings.
-        :param links: Links UUIDs.
         """
         params = [links_ids, packages_ids]
         resp = self.device.action(self.url + "/moveToDownloadlist", params)
@@ -352,9 +344,9 @@ class Linkgrabber:
         """
         Gets download urls from Linkgrabber.
 
+        :param links_ids:
         :param packages_ids: Packages UUID.
         :type: List of strings.
-        :param Links_ids: Links UUID.
         :type: List of strings
         :param url_display_type: No clue. Not documented
         :type: Dictionary
@@ -496,12 +488,10 @@ class Linkgrabber:
         resp = self.device.action("/linkgrabberv2/isCollecting")
         return resp
 
-    def rename_package(self):
-        """
-        No idea what parameters i have to pass and/or i don't know what it does.
-        If i find out i will implement it :P
-        """
-        pass
+    def rename_package(self, package_id, new_name):
+        params = package_id, new_name
+        resp = self.device.action(self.url + "/renamePackage", params)
+        return resp
 
     def query_packages(self, params=[
         {
@@ -520,7 +510,8 @@ class Linkgrabber:
             "saveTo": True,
             "startAt": 0,
             "status": True
-        }]):
+        }
+    ]):
         """
         Get the links in the linkgrabber list
         """
@@ -551,24 +542,24 @@ class Toolbar:
         self.device = device
         self.url = "/toolbar"
 
-    def get_status(self, params=None):
+    def get_status(self):
         resp = self.device.action(self.url + "/getStatus")
         return resp
 
-    def status_downloadSpeedLimit(self):
+    def status_downloadspeedlimit(self):
         self.status = self.get_status()
         if self.status['limit']:
             return 1
         else:
             return 0
 
-    def enable_downloadSpeedLimit(self):
-        self.limit_enabled = self.status_downloadSpeedLimit()
+    def enable_downloadspeedlimit(self):
+        self.limit_enabled = self.status_downloadspeedlimit()
         if not self.limit_enabled:
             self.device.action(self.url + "/toggleDownloadSpeedLimit")
 
-    def disable_downloadSpeedLimit(self):
-        self.limit_enabled = self.status_downloadSpeedLimit()
+    def disable_downloadspeedlimit(self):
+        self.limit_enabled = self.status_downloadspeedlimit()
         if self.limit_enabled:
             self.device.action(self.url + "/toggleDownloadSpeedLimit")
 
@@ -659,9 +650,19 @@ class Downloads:
         resp = self.device.action(self.url + "/cleanup", params)
         return resp
 
+    def move_to_new_package(self, links_ids, packages_ids, new_pkg_name, download_path):
+        params = links_ids, packages_ids, new_pkg_name, download_path
+        resp = self.device.action(self.url + "/movetoNewPackage", params)
+        return resp
+
     def remove_links(self, links_ids, packages_ids):
         params = [links_ids, packages_ids]
         resp = self.device.action(self.url + "/removeLinks", params)
+        return resp
+
+    def reset_links(self, links_ids, packages_ids):
+        params = [links_ids, packages_ids]
+        resp = self.device.action(self.url + "/resetLinks", params)
         return resp
 
 
@@ -735,9 +736,10 @@ class Jddevice:
         All the info of which params are required and what are they default value, type,etc
         can be found in the MY.Jdownloader API Specifications ( https://goo.gl/pkJ9d1 ).
 
+        :param path:
+        :param http_action:
         :param params: Params in the url, in a list of tuples. Example:
         /example?param1=ex&param2=ex2 [("param1","ex"),("param2","ex2")]
-        :param postparams: List of Params that are send in the post.
         """
         action_url = self.__action_url()
         if not self.__direct_connection_enabled or self.__direct_connection_info is None \
@@ -777,8 +779,7 @@ class Jddevice:
                         conn['cooldown'] = time.time() + 60
             # None of the direct connections worked, we set a cooldown for direct connections
             self.__direct_connection_consecutive_failures += 1
-            self.__direct_connection_cooldown = time.time() + \
-                                                (60 * self.__direct_connection_consecutive_failures)
+            self.__direct_connection_cooldown = time.time() + (60 * self.__direct_connection_consecutive_failures)
             # None of the direct connections worked, we use the My.JDownloader api
             response = self.myjd.request_api(path, http_action, params,
                                              action_url)
@@ -844,8 +845,8 @@ class Myjdapi:
 
         """
         secret_hash = hashlib.sha256()
-        secret_hash.update(email.lower().encode('utf-8') \
-                           + password.encode('utf-8') \
+        secret_hash.update(email.lower().encode('utf-8')
+                           + password.encode('utf-8')
                            + domain.lower().encode('utf-8'))
         return secret_hash.digest()
 
@@ -886,7 +887,7 @@ class Myjdapi:
         init_vector = secret_token[:len(secret_token) // 2]
         key = secret_token[len(secret_token) // 2:]
         decryptor = AES.new(key, AES.MODE_CBC, init_vector)
-        decrypted_data = UNPAD(decryptor.decrypt(base64.b64decode(data)))
+        decrypted_data = unpad(decryptor.decrypt(base64.b64decode(data)))
         return decrypted_data
 
     def __encrypt(self, secret_token, data):
@@ -896,7 +897,7 @@ class Myjdapi:
         :param secret_token:
         :param data:
         """
-        data = PAD(data.encode('utf-8'))
+        data = pad(data.encode('utf-8'))
         init_vector = secret_token[:len(secret_token) // 2]
         key = secret_token[len(secret_token) // 2:]
         encryptor = AES.new(key, AES.MODE_CBC, init_vector)
@@ -1005,8 +1006,9 @@ class Myjdapi:
     def get_device(self, device_name=None, device_id=None):
         """
         Returns a jddevice instance of the device
+        :param device_name:
+        :param device_id:
 
-        :param deviceid:
         """
         if not self.is_connected():
             raise (MYJDException("No connection established\n"))
@@ -1051,13 +1053,13 @@ class Myjdapi:
             query += ["rid=" + str(self.__request_id)]
             if self.__server_encryption_token is None:
                 query += [
-                    "signature=" \
+                    "signature="
                     + str(self.__signature_create(self.__login_secret,
                                                   query[0] + "&".join(query[1:])))
                 ]
             else:
                 query += [
-                    "signature=" \
+                    "signature="
                     + str(self.__signature_create(self.__server_encryption_token,
                                                   query[0] + "&".join(query[1:])))
                 ]

@@ -5,7 +5,6 @@
 import os
 import sys
 
-import six
 from myjd_api.config import Config
 from myjd_api.myjd import get_device
 from myjd_api.myjd import get_if_one_device
@@ -13,16 +12,10 @@ from myjd_api.myjd import get_if_one_device
 
 def config():
     configfile = "MyJD.conf"
+    configpath = ""
     if os.path.exists(configfile):
         f = open(configfile, "r")
         configpath = f.readline()
-    else:
-        print(u"Where do you want to store settings? Leave blank to use the current folder.")
-        configpath = six.moves.input("Enter Path:")
-        if len(configpath) > 0:
-            f = open(configfile, "w")
-            f.write(configpath)
-            f.close()
     if len(configpath) == 0:
         configpath = os.path.dirname(sys.argv[0])
         configpath = configpath.replace("\\", "/")
@@ -39,14 +32,14 @@ def config():
 
 def myjd_input(configfile):
     print(u"Please enter your MyJDownloader credentials:")
-    user = six.moves.input("Username/Email:")
-    password = six.moves.input("Password:")
+    user = input("Username/Email:")
+    password = input("Password:")
     device = get_if_one_device(user, password)
     if device:
         print(u"Device name " + device + " found automatically.")
     else:
-        device = six.moves.input(u"Device name :")
-    port = six.moves.input("What port should MyJD listen on? Leave blank to use default 8080:")
+        device = input(u"Device name :")
+    port = input("What port should MyJD listen on? Leave blank to use default 8080:")
     if not port:
         port = '8080'
     Config('MyJD', configfile).save("myjd_user", user)
