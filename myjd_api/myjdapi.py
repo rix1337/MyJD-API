@@ -37,7 +37,7 @@ from urllib.parse import quote
 
 from Cryptodome.Cipher import AES
 
-import requests
+from myjd_api.requests import request
 
 BS = 16
 
@@ -47,6 +47,10 @@ class MYJDException(BaseException):
 
 
 class TokenExpiredException(BaseException):
+    pass
+
+
+class RequestTimeoutException(BaseException):
     pass
 
 
@@ -760,10 +764,13 @@ class Jddevice:
         else:
             # Direct connection info available, we try to use it.
             for conn in self.__direct_connection_info:
+                connection_ip = conn['conn']['ip']
+                if "172.17." in connection_ip or "127.0.0.1" in connection_ip:
+                    continue
                 if time.time() > conn['cooldown']:
                     # We can use the connection
                     connection = conn['conn']
-                    api = "http://" + connection["ip"] + ":" + str(
+                    api = "http://" + connection_ip + ":" + str(
                         connection["port"])
                     # if self.myjd.request_api("/device/ping", "POST", None, self.__action_url(), api):
                     response = self.myjd.request_api(path, http_action, params,
@@ -1064,7 +1071,11 @@ class Myjdapi:
                                                   query[0] + "&".join(query[1:])))
                 ]
             query = query[0] + "&".join(query[1:])
-            encrypted_response = requests.get(api + query, timeout=3)
+            try:
+                encrypted_response = request(api + query, timeout=30)
+            except URLError:
+                encrypted_response = request(api + query, timeout=30, verify=False)
+                print(u"Secure connection to JDownloader could not be verified.")
         else:
             params_request = []
             if params is not None:
@@ -1091,17 +1102,32 @@ class Myjdapi:
             else:
                 request_url = api + path
             try:
-                encrypted_response = requests.post(
+                encrypted_response = request(
                     request_url,
                     headers={
                         "Content-Type": "application/aesjson-jd; charset=utf-8"
                     },
                     data=encrypted_data,
-                    timeout=3)
-            except requests.exceptions.RequestException as e:
-                return None
+                    method="POST",
+                    timeout=30)
+            except URLError:
+                try:
+                    encrypted_response = request(
+                        request_url,
+                        headers={
+                            "Content-Type": "application/aesjson-jd; charset=utf-8"
+                        },
+                        data=encrypted_data,
+                        method="POST",
+                        timeout=30,
+                        verify=False)
+                    print(u"Secure connection to JDownloader could not be verified.")
+                except URLError:
+                    return None
         if encrypted_response.status_code == 403:
             raise TokenExpiredException
+        if encrypted_response.status_code == 503:
+            raise RequestTimeoutException
         if encrypted_response.status_code != 200:
             try:
                 error_msg = json.loads(encrypted_response.text)

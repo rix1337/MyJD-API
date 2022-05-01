@@ -20,9 +20,12 @@ def get_device(configfile):
 
     if myjd_user and myjd_pass and myjd_device:
         try:
-            jd.connect(myjd_user, myjd_pass)
-            jd.update_devices()
-            device = jd.get_device(myjd_device)
+            try:
+                jd.connect(myjd_user, myjd_pass)
+                jd.update_devices()
+                device = jd.get_device(myjd_device)
+            except myjd_api.myjdapi.RequestTimeoutException:
+                device = jd.get_device(myjd_device)
         except myjd_api.myjdapi.MYJDException as e:
             print(u"Error connection to MyJDownloader: " + str(e))
             return False
