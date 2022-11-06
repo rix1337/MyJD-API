@@ -33,6 +33,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "./dist/*.whl"
+          artifactErrorsFailBuild: true
           bodyFile: ".github/Changelog.md"
           tag: v.${{ steps.version.outputs.version }}
       - name: Upload to PyPI
