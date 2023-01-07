@@ -14,8 +14,7 @@ from wsgiref.simple_server import make_server, WSGIServer, WSGIRequestHandler
 
 from Cryptodome.Protocol.KDF import scrypt
 from Cryptodome.Random import get_random_bytes
-from bottle import Bottle, request, abort, HTTPError
-
+from bottle import Bottle, request, redirect, abort, HTTPError
 from myjd_api.common import check_ip
 from myjd_api.common import decode_base64
 from myjd_api.config import Config
@@ -103,10 +102,10 @@ def app_container(port, configfile, _device):
         auth_user = _config.get('auth_user')
         auth_hash = _config.get('auth_hash')
         if auth_user and auth_hash:
-            if auth_hash and "srcypt|" not in auth_hash:
+            if auth_hash and "scrypt|" not in auth_hash:
                 salt = get_random_bytes(16).hex()
                 key = scrypt(auth_hash, salt, 16, N=2 ** 14, r=8, p=1).hex()
-                auth_hash = "srcypt|" + salt + "|" + key
+                auth_hash = "scrypt|" + salt + "|" + key
                 _config.save("auth_hash", to_str(auth_hash))
             secrets = auth_hash.split("|")
             salt = secrets[1]
@@ -143,6 +142,11 @@ def app_container(port, configfile, _device):
             }
         else:
             return abort(400, "Failed")
+
+    @app.hook('before_request')
+    def redirect_without_trailing_slash():
+        if not request.path.endswith('/'):
+            raise redirect(request.url + '/')
 
     @app.get("/myjd_state/")
     @auth_basic(is_authenticated_user)

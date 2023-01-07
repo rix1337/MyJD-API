@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # MyJD
 # Project by https://github.com/rix1337
-
-bottle==0.12.20
-pycryptodomex==3.14.1
+bottle==0.12.23
+pycryptodomex==3.16.0
