@@ -145,7 +145,13 @@ def app_container(port, configfile, _device):
 
     @app.hook('before_request')
     def redirect_without_trailing_slash():
-        if not request.path.endswith('/'):
+        no_trailing_slash = [
+            "/api/myjd_move/",
+            "/api/myjd_remove/",
+            "/api/myjd_retry/",
+            "/api/myjd_pause/"
+        ]
+        if not request.path.endswith('/') and not any(s in request.path for s in no_trailing_slash):
             raise redirect(request.url + '/')
 
     @app.get("/myjd_state/")
