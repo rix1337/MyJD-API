@@ -2,4 +2,4 @@
 # MyJD
 # Project by https://github.com/rix1337
 bottle==0.12.23
-pycryptodomex==3.16.0
+pycryptodomex==3.19.1
