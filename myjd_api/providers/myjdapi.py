@@ -37,7 +37,7 @@ from urllib.parse import quote
 
 from Cryptodome.Cipher import AES
 
-from myjd_api.requests import request
+from myjd_api.providers.requests import request
 
 BS = 16
 

@@ -15,23 +15,23 @@ from wsgiref.simple_server import make_server, WSGIServer, WSGIRequestHandler
 from Cryptodome.Protocol.KDF import scrypt
 from Cryptodome.Random import get_random_bytes
 from bottle import Bottle, request, redirect, abort, HTTPError
-from myjd_api.common import check_ip
-from myjd_api.common import decode_base64
-from myjd_api.config import Config
-from myjd_api.files import config
-from myjd_api.files import myjd_input
-from myjd_api.myjd import get_device
-from myjd_api.myjd import get_if_one_device
-from myjd_api.myjd import get_info
-from myjd_api.myjd import get_state
-from myjd_api.myjd import jdownloader_pause
-from myjd_api.myjd import jdownloader_start
-from myjd_api.myjd import jdownloader_stop
-from myjd_api.myjd import move_to_downloads
-from myjd_api.myjd import remove_from_linkgrabber
-from myjd_api.myjd import retry_decrypt
-from myjd_api.myjd import update_jdownloader
-from myjd_api.version import get_version
+from myjd_api.providers.common import check_ip
+from myjd_api.providers.common import decode_base64
+from myjd_api.providers.config import Config
+from myjd_api.providers.files import config
+from myjd_api.providers.files import myjd_input
+from myjd_api.providers.myjd import get_device
+from myjd_api.providers.myjd import get_if_one_device
+from myjd_api.providers.myjd import get_info
+from myjd_api.providers.myjd import get_state
+from myjd_api.providers.myjd import jdownloader_pause
+from myjd_api.providers.myjd import jdownloader_start
+from myjd_api.providers.myjd import jdownloader_stop
+from myjd_api.providers.myjd import move_to_downloads
+from myjd_api.providers.myjd import remove_from_linkgrabber
+from myjd_api.providers.myjd import retry_decrypt
+from myjd_api.providers.myjd import update_jdownloader
+from myjd_api.providers.version import get_version
 
 
 class ThreadingWSGIServer(ThreadingMixIn, WSGIServer):
@@ -389,3 +389,6 @@ def main():
         print(u'Could not connect to My JDownloader! Exiting...')
         time.sleep(10)
         sys.exit(1)
+
+if __name__ == "__main__":
+    main()

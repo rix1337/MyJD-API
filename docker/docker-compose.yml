@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+    docker-myjd-api:
+        container_name: MyJD-API
+        ports:
+            - 'port:8080'
+        volumes:
+            - '/path/to/config/:/config:rw'
+        environment:
+            - USER=USERNAME
+            - PASS=PASSWORD
+            - DEVICE=DEVICENAME
+        image: rix1337/docker-myjd-api:latest

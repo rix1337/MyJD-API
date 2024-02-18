@@ -4,7 +4,7 @@
 
 import setuptools
 
-from myjd_api.version import get_version
+from myjd_api.providers.version import get_version
 
 try:
     with open('README.md', encoding='utf-8') as f:
@@ -37,7 +37,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'myjd_api = myjd_api.web:main',
+            'myjd_api = myjd_api.run:main',
         ],
     },
 )
