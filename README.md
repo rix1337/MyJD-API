@@ -41,7 +41,6 @@ docker run -d \
  - `-e DEVICE` (always, if only one device is present at MyJD-Account, otherwise after first run, if unchanged)
 
 
-
 ## Credits
 
 * [mmarquezs](https://github.com/mmarquezs/)
