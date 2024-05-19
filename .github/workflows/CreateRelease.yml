@@ -30,7 +30,7 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
       - name: Get Version
-        run: echo "version=$(python myjd_api/version.py)" >>$GITHUB_OUTPUT
+        run: echo "version=$(python myjd_api/providers/version.py)" >>$GITHUB_OUTPUT
         id: version
       - name: Create Release
         uses: ncipollo/release-action@v1
