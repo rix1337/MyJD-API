@@ -1,3 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-exec myjd_api --docker --jd-user=$USER --jd-pass=$PASS --jd-device=$DEVICE
