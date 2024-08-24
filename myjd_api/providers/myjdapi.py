@@ -773,8 +773,12 @@ class Jddevice:
                     api = "http://" + connection_ip + ":" + str(
                         connection["port"])
                     # if self.myjd.request_api("/device/ping", "POST", None, self.__action_url(), api):
-                    response = self.myjd.request_api(path, http_action, params,
+                    try:
+                        response = self.myjd.request_api(path, http_action, params,
                                                      action_url, api)
+                    except:
+                        continue
+
                     if response is not None:
                         # This connection worked so we push it to the top of the list.
                         self.__direct_connection_info.remove(conn)
